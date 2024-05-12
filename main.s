@@ -50,7 +50,7 @@ LEDMATRIX_DisplayPixel:
     ecall
 
     # Return from function
-    jr ra
+    ret
 
 
 # End of program, leave a blank line afterwards is preferred

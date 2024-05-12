@@ -24,6 +24,6 @@ function:
     li a2, 0xFF0000
     ecall
 
-    jr ra
+    ret
 
 # End of program, leave a blank line afterwards is preferred

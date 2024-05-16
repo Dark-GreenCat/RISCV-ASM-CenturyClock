@@ -38,9 +38,11 @@ _start:
     li a0, 123456789
     li a1, 1
     li a2, 1
-    li a3, 13
+    li a3, 1
     lw a4, COLOR_DEFAULT
     call DISPLAY_DisplayNumber
+
+    call DISPLAY_DisplaySecond
 
     # Exit program
     li a0, EXIT
@@ -126,6 +128,29 @@ DISPLAY_DisplayNumber:
     lw ra, 0(sp)            # ra
     # Restore (callee-save) stack pointer before returning
     addi sp, sp, 28
+    # Return from function
+    ret
+
+
+# void DISPLAY_DisplaySecond(void)
+.globl DISPLAY_DisplaySecond
+DISPLAY_DisplaySecond:
+    # Reserve 1 words on the stack
+    addi sp, sp, -4
+    # Store caller-save registers on stack
+    sw ra, 0(sp)            # ra
+
+    lb a0, g_clock_second
+    lh a1, POS_SS_X
+    lh a2, POS_SS_Y
+    lb a3, NUMBER_WIDTH_2
+    lw a4, COLOR_DEFAULT
+    call DISPLAY_DisplayNumber
+
+    # Retore caller-save registers from stack
+    lw ra, 0(sp)            # ra
+    # Restore (callee-save) stack pointer before returning
+    addi sp, sp, 4
     # Return from function
     ret
 
@@ -369,6 +394,23 @@ FONT_DIGIT_9:
     .byte 0b10001
     .byte 0b01110
 
+# Define position for clock element
+POS_SS_X:   .half 1
+POS_SS_Y:   .half 1
+POS_MI_X:   .half 16
+POS_MI_Y:   .half 1
+POS_HH_X:   .half 31
+POS_HH_Y:   .half 1
+POS_DD_X:   .half 1
+POS_DD_Y:   .half 13
+POS_MO_X:   .half 16
+POS_MO_Y:   .half 13
+POS_YY_X:   .half 31
+POS_YY_Y:   .half 13
+
+# Define number witdh
+NUMBER_WIDTH_2: .byte 2
+NUMBER_WIDTH_4: .byte 4
 
 # #######################################
 # ######      GLOBAL VARIABLE     #######
@@ -387,5 +429,13 @@ g_p_font_digit:
     .word FONT_DIGIT_7
     .word FONT_DIGIT_8
     .word FONT_DIGIT_9
+
+# Define clock element
+g_clock_second: .byte 0
+g_clock_minute: .byte 30
+g_clock_hour:   .byte 7
+g_clock_day:    .byte 11
+g_clock_month:  .byte 5
+g_clock_year:   .half 2024
 
 # End of program, leave a blank line afterwards is preferred

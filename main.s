@@ -17,7 +17,122 @@
 
 # Define color
 COLOR_DEFAULT:      .word 0xFFFF00
-COLOR_BACKGROUND:   .word 0x8F8F8F
+COLOR_BACKGROUND:   .word 0x2F2F2F
+
+# Define font size
+FONT_WIDTH:         .byte 5
+FONT_HEIGHT:        .byte 8
+
+# Define font for digit
+FONT_DIGIT_0:
+    .byte 0b01110
+    .byte 0b10001
+    .byte 0b10011
+    .byte 0b10101
+    .byte 0b11001
+    .byte 0b10001
+    .byte 0b10001
+    .byte 0b01110
+FONT_DIGIT_1:
+    .byte 0b00100
+    .byte 0b01100
+    .byte 0b10100
+    .byte 0b00100
+    .byte 0b00100
+    .byte 0b00100
+    .byte 0b00100
+    .byte 0b11111
+FONT_DIGIT_2:
+    .byte 0b01110
+    .byte 0b10001
+    .byte 0b00001
+    .byte 0b00010
+    .byte 0b00100
+    .byte 0b01000
+    .byte 0b10000
+    .byte 0b11111
+FONT_DIGIT_3:
+    .byte 0b01110
+    .byte 0b10001
+    .byte 0b00001
+    .byte 0b00110
+    .byte 0b00001
+    .byte 0b00001
+    .byte 0b10001
+    .byte 0b01110
+FONT_DIGIT_4:
+    .byte 0b10001
+    .byte 0b10001
+    .byte 0b10001
+    .byte 0b11111
+    .byte 0b00001
+    .byte 0b00001
+    .byte 0b00001
+    .byte 0b00001
+FONT_DIGIT_5:
+    .byte 0b11111
+    .byte 0b10000
+    .byte 0b10000
+    .byte 0b11110
+    .byte 0b00001
+    .byte 0b00001
+    .byte 0b00001
+    .byte 0b11110
+FONT_DIGIT_6:
+    .byte 0b01111
+    .byte 0b10000
+    .byte 0b10000
+    .byte 0b11111
+    .byte 0b10001
+    .byte 0b10001
+    .byte 0b10001
+    .byte 0b01110
+FONT_DIGIT_7:
+    .byte 0b11111
+    .byte 0b00001
+    .byte 0b00001
+    .byte 0b00010
+    .byte 0b00100
+    .byte 0b00100
+    .byte 0b00100
+    .byte 0b00100
+FONT_DIGIT_8:
+    .byte 0b01110
+    .byte 0b10001
+    .byte 0b10001
+    .byte 0b01110
+    .byte 0b10001
+    .byte 0b10001
+    .byte 0b10001
+    .byte 0b01110
+FONT_DIGIT_9:
+    .byte 0b01110
+    .byte 0b10001
+    .byte 0b10001
+    .byte 0b11111
+    .byte 0b00001
+    .byte 0b00001
+    .byte 0b10001
+    .byte 0b01110
+
+
+# #######################################
+# ######      GLOBAL VARIABLE     #######
+# #######################################
+.data
+
+# Define font array
+g_p_font_digit:
+    .word FONT_DIGIT_0
+    .word FONT_DIGIT_1
+    .word FONT_DIGIT_2
+    .word FONT_DIGIT_3
+    .word FONT_DIGIT_4
+    .word FONT_DIGIT_5
+    .word FONT_DIGIT_6
+    .word FONT_DIGIT_7
+    .word FONT_DIGIT_8
+    .word FONT_DIGIT_9
 
 
 # #######################################
@@ -40,6 +155,18 @@ _start:
     li a3, 9
     lw a4, COLOR_DEFAULT
     call LEDMATRIX_DisplayRow
+
+    li a0, 5
+    li a1, 13
+    li a2, 1
+    lw a3, COLOR_DEFAULT
+    call LEDMATRIX_DisplayDigit
+
+    li a0, 7
+    li a1, 13
+    li a2, 12
+    lw a3, COLOR_DEFAULT
+    call LEDMATRIX_DisplayDigit
 
     # Exit program
     li a0, EXIT
@@ -66,6 +193,7 @@ LEDMATRIX_DisplayPixel:
     # Return from function
     ret
 
+
 # void LEDMATRIX_DisplayRow(uint16_t row, uint16_t width, uint16_t x, uint16_t y, uint32_t color)
 .globl LEDMATRIX_DisplayRow
 LEDMATRIX_DisplayRow:
@@ -76,7 +204,7 @@ LEDMATRIX_DisplayRow:
 
 0:  
     addi a1, a1, -1
-    blt a1, x0, end
+    blt a1, x0, LEDMATRIX_DisplayRow_end
 
     # Store caller-save registers on stack
     sw a0, 4(sp)            # row
@@ -112,11 +240,60 @@ LEDMATRIX_DisplayRow_endif:
     addi a2, a2, 1
     j 0b
 
-end:
+LEDMATRIX_DisplayRow_end:
     # Retore caller-save registers from stack
     lw ra, 0(sp)            # ra
     # Restore (callee-save) stack pointer before returning
     addi sp, sp, 24
+    # Return from function
+    ret
+
+
+# void LEDMATRIX_DisplayDigit(uint8_t digit, uint16_t x, uint16_t y, uint32_t color)
+.globl LEDMATRIX_DisplayDigit
+LEDMATRIX_DisplayDigit:
+    # Reserve 4 words on the stack
+    addi sp, sp, -16
+    # Store caller-save registers on stack
+    sw ra, 0(sp)            # ra
+
+    lb s0, FONT_HEIGHT      # s0 = height
+    la s1, g_p_font_digit
+    slli a0, a0, 2
+    add s1, s1, a0          # s1 = g_p_font_digit + digit * 4
+    lw s1, 0(s1)
+
+0:
+    ble s0, zero, LEDMATRIX_DisplayDigit_end # if s0 <= 0 then LEDMATRIX_DisplayDigit_end
+    addi s0, s0, -1
+
+    # Store caller-save registers on stack
+    sw a1, 4(sp)
+    sw a2, 8(sp)
+    sw a3, 12(sp)
+
+    mv a4, a3
+    mv a3, a2
+    mv a2, a1
+    lb a1, FONT_WIDTH
+    lb a0, 0(s1)
+
+    call LEDMATRIX_DisplayRow
+
+    # Restore caller-save registers from stack
+    lw a1, 4(sp)
+    lw a2, 8(sp)
+    lw a3, 12(sp)
+
+    addi s1, s1, 1
+    addi a2, a2, 1
+    j 0b
+
+LEDMATRIX_DisplayDigit_end:
+    # Retore caller-save registers from stack
+    lw ra, 0(sp)            # ra
+    # Restore (callee-save) stack pointer before returning
+    addi sp, sp, 16
     # Return from function
     ret
 

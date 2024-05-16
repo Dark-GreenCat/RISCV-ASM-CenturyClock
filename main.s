@@ -45,6 +45,13 @@ _start:
     li a0, EXIT
     ecall
 
+
+
+# #######################################
+# #####      LED MATRIX MODULE     ######
+# #######################################
+.text
+
 # void LEDMATRIX_DisplayPixel(uint16_t x, uint16_t y, uint32_t color)
 .globl LEDMATRIX_DisplayPixel
 LEDMATRIX_DisplayPixel:

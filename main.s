@@ -43,6 +43,11 @@ _start:
     call DISPLAY_DisplayNumber
 
     call DISPLAY_DisplaySecond
+    call DISPLAY_DisplayMinute
+    call DISPLAY_DisplayHour
+    call DISPLAY_DisplayDay
+    call DISPLAY_DisplayMonth
+    call DISPLAY_DisplayYear
 
     # Exit program
     li a0, EXIT
@@ -144,6 +149,121 @@ DISPLAY_DisplaySecond:
     lh a1, POS_SS_X
     lh a2, POS_SS_Y
     lb a3, NUMBER_WIDTH_2
+    lw a4, COLOR_DEFAULT
+    call DISPLAY_DisplayNumber
+
+    # Retore caller-save registers from stack
+    lw ra, 0(sp)            # ra
+    # Restore (callee-save) stack pointer before returning
+    addi sp, sp, 4
+    # Return from function
+    ret
+
+
+# void DISPLAY_DisplayMinute(void)
+.globl DISPLAY_DisplayMinute
+DISPLAY_DisplayMinute:
+    # Reserve 1 words on the stack
+    addi sp, sp, -4
+    # Store caller-save registers on stack
+    sw ra, 0(sp)            # ra
+
+    lb a0, g_clock_minute
+    lh a1, POS_MI_X
+    lh a2, POS_MI_Y
+    lb a3, NUMBER_WIDTH_2
+    lw a4, COLOR_DEFAULT
+    call DISPLAY_DisplayNumber
+
+    # Retore caller-save registers from stack
+    lw ra, 0(sp)            # ra
+    # Restore (callee-save) stack pointer before returning
+    addi sp, sp, 4
+    # Return from function
+    ret
+
+
+# void DISPLAY_DisplayHour(void)
+.globl DISPLAY_DisplayHour
+DISPLAY_DisplayHour:
+    # Reserve 1 words on the stack
+    addi sp, sp, -4
+    # Store caller-save registers on stack
+    sw ra, 0(sp)            # ra
+
+    lb a0, g_clock_hour
+    lh a1, POS_HH_X
+    lh a2, POS_HH_Y
+    lb a3, NUMBER_WIDTH_2
+    lw a4, COLOR_DEFAULT
+    call DISPLAY_DisplayNumber
+
+    # Retore caller-save registers from stack
+    lw ra, 0(sp)            # ra
+    # Restore (callee-save) stack pointer before returning
+    addi sp, sp, 4
+    # Return from function
+    ret
+
+
+# void DISPLAY_DisplayDay(void)
+.globl DISPLAY_DisplayDay
+DISPLAY_DisplayDay:
+    # Reserve 1 words on the stack
+    addi sp, sp, -4
+    # Store caller-save registers on stack
+    sw ra, 0(sp)            # ra
+
+    lb a0, g_clock_day
+    lh a1, POS_DD_X
+    lh a2, POS_DD_Y
+    lb a3, NUMBER_WIDTH_2
+    lw a4, COLOR_DEFAULT
+    call DISPLAY_DisplayNumber
+
+    # Retore caller-save registers from stack
+    lw ra, 0(sp)            # ra
+    # Restore (callee-save) stack pointer before returning
+    addi sp, sp, 4
+    # Return from function
+    ret
+
+
+# void DISPLAY_DisplayMonth(void)
+.globl DISPLAY_DisplayMonth
+DISPLAY_DisplayMonth:
+    # Reserve 1 words on the stack
+    addi sp, sp, -4
+    # Store caller-save registers on stack
+    sw ra, 0(sp)            # ra
+
+    lb a0, g_clock_month
+    lh a1, POS_MO_X
+    lh a2, POS_MO_Y
+    lb a3, NUMBER_WIDTH_2
+    lw a4, COLOR_DEFAULT
+    call DISPLAY_DisplayNumber
+
+    # Retore caller-save registers from stack
+    lw ra, 0(sp)            # ra
+    # Restore (callee-save) stack pointer before returning
+    addi sp, sp, 4
+    # Return from function
+    ret
+
+
+# void DISPLAY_DisplayYear(void)
+.globl DISPLAY_DisplayYear
+DISPLAY_DisplayYear:
+    # Reserve 1 words on the stack
+    addi sp, sp, -4
+    # Store caller-save registers on stack
+    sw ra, 0(sp)            # ra
+
+    lh a0, g_clock_year
+    lh a1, POS_YY_X
+    lh a2, POS_YY_Y
+    lb a3, NUMBER_WIDTH_4
     lw a4, COLOR_DEFAULT
     call DISPLAY_DisplayNumber
 

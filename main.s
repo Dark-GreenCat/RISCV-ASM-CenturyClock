@@ -3,139 +3,6 @@
 .globl _start
 
 # #######################################
-# #########      CONSTANT      ##########
-# #######################################
-
-# Define ecall IDs
-.equ    EXIT, 10
-.equ    LEDMATRIX_SET_PIXEL, 0x100
-
-# #######################################
-# #####      CONSTANT VARIABLE     ######
-# #######################################
-.data
-
-# Define color
-COLOR_DEFAULT:      .word 0xFFFF00
-COLOR_BACKGROUND:   .word 0x2F2F2F
-
-# Define font size
-FONT_WIDTH:         .byte 5
-FONT_HEIGHT:        .byte 8
-
-# Define font for digit
-FONT_DIGIT_0:
-    .byte 0b01110
-    .byte 0b10001
-    .byte 0b10011
-    .byte 0b10101
-    .byte 0b11001
-    .byte 0b10001
-    .byte 0b10001
-    .byte 0b01110
-FONT_DIGIT_1:
-    .byte 0b00100
-    .byte 0b01100
-    .byte 0b10100
-    .byte 0b00100
-    .byte 0b00100
-    .byte 0b00100
-    .byte 0b00100
-    .byte 0b11111
-FONT_DIGIT_2:
-    .byte 0b01110
-    .byte 0b10001
-    .byte 0b00001
-    .byte 0b00010
-    .byte 0b00100
-    .byte 0b01000
-    .byte 0b10000
-    .byte 0b11111
-FONT_DIGIT_3:
-    .byte 0b01110
-    .byte 0b10001
-    .byte 0b00001
-    .byte 0b00110
-    .byte 0b00001
-    .byte 0b00001
-    .byte 0b10001
-    .byte 0b01110
-FONT_DIGIT_4:
-    .byte 0b10001
-    .byte 0b10001
-    .byte 0b10001
-    .byte 0b11111
-    .byte 0b00001
-    .byte 0b00001
-    .byte 0b00001
-    .byte 0b00001
-FONT_DIGIT_5:
-    .byte 0b11111
-    .byte 0b10000
-    .byte 0b10000
-    .byte 0b11110
-    .byte 0b00001
-    .byte 0b00001
-    .byte 0b00001
-    .byte 0b11110
-FONT_DIGIT_6:
-    .byte 0b01111
-    .byte 0b10000
-    .byte 0b10000
-    .byte 0b11111
-    .byte 0b10001
-    .byte 0b10001
-    .byte 0b10001
-    .byte 0b01110
-FONT_DIGIT_7:
-    .byte 0b11111
-    .byte 0b00001
-    .byte 0b00001
-    .byte 0b00010
-    .byte 0b00100
-    .byte 0b00100
-    .byte 0b00100
-    .byte 0b00100
-FONT_DIGIT_8:
-    .byte 0b01110
-    .byte 0b10001
-    .byte 0b10001
-    .byte 0b01110
-    .byte 0b10001
-    .byte 0b10001
-    .byte 0b10001
-    .byte 0b01110
-FONT_DIGIT_9:
-    .byte 0b01110
-    .byte 0b10001
-    .byte 0b10001
-    .byte 0b11111
-    .byte 0b00001
-    .byte 0b00001
-    .byte 0b10001
-    .byte 0b01110
-
-
-# #######################################
-# ######      GLOBAL VARIABLE     #######
-# #######################################
-.data
-
-# Define font array
-g_p_font_digit:
-    .word FONT_DIGIT_0
-    .word FONT_DIGIT_1
-    .word FONT_DIGIT_2
-    .word FONT_DIGIT_3
-    .word FONT_DIGIT_4
-    .word FONT_DIGIT_5
-    .word FONT_DIGIT_6
-    .word FONT_DIGIT_7
-    .word FONT_DIGIT_8
-    .word FONT_DIGIT_9
-
-
-# #######################################
 # ########      ENTRY POINT     #########
 # #######################################
 .text
@@ -296,5 +163,143 @@ LEDMATRIX_DisplayDigit_end:
     addi sp, sp, 16
     # Return from function
     ret
+
+
+
+
+
+
+
+# #######################################
+# #########      CONSTANT      ##########
+# #######################################
+
+# Define ecall IDs
+.equ    EXIT, 10
+.equ    LEDMATRIX_SET_PIXEL, 0x100
+
+# #######################################
+# #####      CONSTANT VARIABLE     ######
+# #######################################
+.data
+
+# Define color
+COLOR_DEFAULT:      .word 0xFFFF00
+COLOR_BACKGROUND:   .word 0x2F2F2F
+
+# Define font size
+FONT_WIDTH:         .byte 5
+FONT_HEIGHT:        .byte 8
+
+# Define font for digit
+FONT_DIGIT_0:
+    .byte 0b01110
+    .byte 0b10001
+    .byte 0b10011
+    .byte 0b10101
+    .byte 0b11001
+    .byte 0b10001
+    .byte 0b10001
+    .byte 0b01110
+FONT_DIGIT_1:
+    .byte 0b00100
+    .byte 0b01100
+    .byte 0b10100
+    .byte 0b00100
+    .byte 0b00100
+    .byte 0b00100
+    .byte 0b00100
+    .byte 0b11111
+FONT_DIGIT_2:
+    .byte 0b01110
+    .byte 0b10001
+    .byte 0b00001
+    .byte 0b00010
+    .byte 0b00100
+    .byte 0b01000
+    .byte 0b10000
+    .byte 0b11111
+FONT_DIGIT_3:
+    .byte 0b01110
+    .byte 0b10001
+    .byte 0b00001
+    .byte 0b00110
+    .byte 0b00001
+    .byte 0b00001
+    .byte 0b10001
+    .byte 0b01110
+FONT_DIGIT_4:
+    .byte 0b10001
+    .byte 0b10001
+    .byte 0b10001
+    .byte 0b11111
+    .byte 0b00001
+    .byte 0b00001
+    .byte 0b00001
+    .byte 0b00001
+FONT_DIGIT_5:
+    .byte 0b11111
+    .byte 0b10000
+    .byte 0b10000
+    .byte 0b11110
+    .byte 0b00001
+    .byte 0b00001
+    .byte 0b00001
+    .byte 0b11110
+FONT_DIGIT_6:
+    .byte 0b01111
+    .byte 0b10000
+    .byte 0b10000
+    .byte 0b11111
+    .byte 0b10001
+    .byte 0b10001
+    .byte 0b10001
+    .byte 0b01110
+FONT_DIGIT_7:
+    .byte 0b11111
+    .byte 0b00001
+    .byte 0b00001
+    .byte 0b00010
+    .byte 0b00100
+    .byte 0b00100
+    .byte 0b00100
+    .byte 0b00100
+FONT_DIGIT_8:
+    .byte 0b01110
+    .byte 0b10001
+    .byte 0b10001
+    .byte 0b01110
+    .byte 0b10001
+    .byte 0b10001
+    .byte 0b10001
+    .byte 0b01110
+FONT_DIGIT_9:
+    .byte 0b01110
+    .byte 0b10001
+    .byte 0b10001
+    .byte 0b11111
+    .byte 0b00001
+    .byte 0b00001
+    .byte 0b10001
+    .byte 0b01110
+
+
+# #######################################
+# ######      GLOBAL VARIABLE     #######
+# #######################################
+.data
+
+# Define font array
+g_p_font_digit:
+    .word FONT_DIGIT_0
+    .word FONT_DIGIT_1
+    .word FONT_DIGIT_2
+    .word FONT_DIGIT_3
+    .word FONT_DIGIT_4
+    .word FONT_DIGIT_5
+    .word FONT_DIGIT_6
+    .word FONT_DIGIT_7
+    .word FONT_DIGIT_8
+    .word FONT_DIGIT_9
 
 # End of program, leave a blank line afterwards is preferred

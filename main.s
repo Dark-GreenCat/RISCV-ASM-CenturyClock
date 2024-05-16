@@ -42,6 +42,9 @@ _start:
     lw a4, COLOR_DEFAULT
     call DISPLAY_DisplayNumber
 
+    lw a0, COLOR_SCREEN
+    call LEDMATRIX_SetScreen
+
     call DISPLAY_DisplaySecond
     call DISPLAY_DisplayMinute
     call DISPLAY_DisplayHour
@@ -280,6 +283,16 @@ DISPLAY_DisplayYear:
 # #######################################
 .text
 
+# void LEDMATRIX_SetScreen(uint32_t color)
+.globl LEDMATRIX_SetScreen
+LEDMATRIX_SetScreen:
+    mv a1, a0
+    li a0, LEDMATRIX_SET_SCREEN
+    ecall
+
+    # Return from function
+    ret
+
 # void LEDMATRIX_DisplayPixel(uint16_t x, uint16_t y, uint32_t color)
 .globl LEDMATRIX_DisplayPixel
 LEDMATRIX_DisplayPixel:
@@ -408,6 +421,7 @@ LEDMATRIX_DisplayDigit_end:
 # Define ecall IDs
 .equ    EXIT, 10
 .equ    LEDMATRIX_SET_PIXEL, 0x100
+.equ    LEDMATRIX_SET_SCREEN, 0x101
 
 # #######################################
 # #####      CONSTANT VARIABLE     ######
@@ -417,6 +431,7 @@ LEDMATRIX_DisplayDigit_end:
 # Define color
 COLOR_DEFAULT:      .word 0xFFFF00
 COLOR_BACKGROUND:   .word 0x2F2F2F
+COLOR_SCREEN:       .word 0x000000
 
 # Define font size
 FONT_WIDTH:         .byte 5

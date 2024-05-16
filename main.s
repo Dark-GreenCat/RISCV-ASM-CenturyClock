@@ -35,6 +35,13 @@ _start:
     lw a3, COLOR_DEFAULT
     call LEDMATRIX_DisplayDigit
 
+    li a0, 123456789
+    li a1, 1
+    li a2, 1
+    li a3, 13
+    lw a4, COLOR_DEFAULT
+    call DISPLAY_DisplayNumber
+
     # Exit program
     li a0, EXIT
     ecall
@@ -67,7 +74,60 @@ _start:
 # #######################################
 .text
 
+# void DISPLAY_DisplayNumber(uint32_t number, uint16_t position_x, uint16_t position_y, uint16_t display_width, uint32_t color)
+.globl DISPLAY_DisplayNumber
+DISPLAY_DisplayNumber:
+    # Reserve 7 words on the stack
+    addi sp, sp, -28
+    # Store caller-save registers on stack
+    sw ra, 0(sp)            # ra
 
+    lb s0, FONT_WIDTH
+    addi s0, s0, 1          # s0 = FONT_WIDTH + 1
+    mv t0, a3
+    addi t0, t0, -1         # t0 = display_width - 1
+    mul t0, s0, t0
+    add a1, a1, t0          # x = position_x + (FONT_WIDTH + 1) * (display_width - 1)
+
+0:
+    beqz a3, 1f
+    li t0, 10
+    div t1, a0, t0
+    mul t0, t1, t0
+    sub t0, a0, t0          # t0 = digit = number % 10
+    mv a0, t1               # a0 = number = number / 10
+
+    # Store caller-save registers on stack
+    sw a0, 4(sp)   
+    sw a1, 8(sp)     
+    sw a2, 12(sp)
+    sw a3, 16(sp)
+    sw a4, 20(sp)
+    sw s0, 24(sp)
+
+    mv a0, t0
+    mv a3, a4
+    call LEDMATRIX_DisplayDigit
+
+    # Restore caller-save registers from stack
+    lw a0, 4(sp)   
+    lw a1, 8(sp)     
+    lw a2, 12(sp)
+    lw a3, 16(sp)
+    lw a4, 20(sp)    
+    lw s0, 24(sp)
+
+    sub a1, a1, s0
+    addi a3, a3, -1
+    j 0b
+
+1:
+    # Retore caller-save registers from stack
+    lw ra, 0(sp)            # ra
+    # Restore (callee-save) stack pointer before returning
+    addi sp, sp, 28
+    # Return from function
+    ret
 
 
 # #######################################

@@ -19,6 +19,7 @@ _start:
     call TERMINAL_PrintChar
 
     call TERMINAL_DisplayTime
+    call TERMINAL_DisplayDate
 
     # Exit program
     li a0, EXIT
@@ -472,6 +473,11 @@ TERMINAL_PrintChar:
 # void TERMINAL_DisplayTime(void)
 .globl TERMINAL_DisplayTime
 TERMINAL_DisplayTime:
+    # Reserve 1 words on the stack
+    addi sp, sp, -4
+    # Store caller-save registers on stack
+    sw ra, 0(sp)            # ra
+
     la a0, STR_TIME
     call TERMINAL_PrintString
     lb a0, g_clock_hour
@@ -486,6 +492,46 @@ TERMINAL_DisplayTime:
     call TERMINAL_PrintNumber
     li a0, '\n'
     call TERMINAL_PrintChar
+
+    # Retore caller-save registers from stack
+    lw ra, 0(sp)            # ra
+    # Restore (callee-save) stack pointer before returning
+    addi sp, sp, 4
+    # Return from function
+    ret
+
+
+# void TERMINAL_DisplayDate(void)
+.globl TERMINAL_DisplayDate
+TERMINAL_DisplayDate:
+    # Reserve 1 words on the stack
+    addi sp, sp, -4
+    # Store caller-save registers on stack
+    sw ra, 0(sp)            # ra
+
+    la a0, STR_DATE
+    call TERMINAL_PrintString
+    lb a0, g_clock_day
+    call TERMINAL_PrintNumber
+    li a0, '/'
+    call TERMINAL_PrintChar
+    lb a0, g_clock_month
+    call TERMINAL_PrintNumber
+    li a0, '/'
+    call TERMINAL_PrintChar
+    lh a0, g_clock_year
+    call TERMINAL_PrintNumber
+    li a0, '\n'
+    call TERMINAL_PrintChar
+
+    # Retore caller-save registers from stack
+    lw ra, 0(sp)            # ra
+    # Restore (callee-save) stack pointer before returning
+    addi sp, sp, 4
+    # Return from function
+    ret
+
+
 
 # #######################################
 # #########      CONSTANT      ##########

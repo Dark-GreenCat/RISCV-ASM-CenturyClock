@@ -11,7 +11,18 @@
 _start:
 infinity_loop:
     # Update clock element here
-    # Write your code...
+    # Remove the example code and write your code... 
+    # ### example code begin
+    lb a0, g_clock_second
+    addi a0, a0, 1
+    li a1, 13
+    blt a0, a1, 1f
+    mv a0, zero
+1:
+    la a1, g_clock_second
+    sb a0, 0(a1)
+    # ### example code end
+
 
     # Display clock to terminal
     li a0, 35

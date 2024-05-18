@@ -470,16 +470,14 @@ TERMINAL_PrintChar:
     ret
 
 
-# void TERMINAL_DisplayTime(void)
-.globl TERMINAL_DisplayTime
-TERMINAL_DisplayTime:
+# void TERMINAL_PrintTime(void)
+.globl TERMINAL_PrintTime
+TERMINAL_PrintTime:
     # Reserve 1 words on the stack
     addi sp, sp, -4
     # Store caller-save registers on stack
     sw ra, 0(sp)            # ra
 
-    la a0, STR_TIME
-    call TERMINAL_PrintString
     lb a0, g_clock_hour
     call TERMINAL_PrintNumber
     li a0, ':'
@@ -490,6 +488,55 @@ TERMINAL_DisplayTime:
     call TERMINAL_PrintChar
     lb a0, g_clock_second
     call TERMINAL_PrintNumber
+
+    # Retore caller-save registers from stack
+    lw ra, 0(sp)            # ra
+    # Restore (callee-save) stack pointer before returning
+    addi sp, sp, 4
+    # Return from function
+    ret
+
+
+# void TERMINAL_PrintDate(void)
+.globl TERMINAL_PrintDate
+TERMINAL_PrintDate:
+    # Reserve 1 words on the stack
+    addi sp, sp, -4
+    # Store caller-save registers on stack
+    sw ra, 0(sp)            # ra
+
+    lb a0, g_clock_day
+    call TERMINAL_PrintNumber
+    li a0, '/'
+    call TERMINAL_PrintChar
+    lb a0, g_clock_month
+    call TERMINAL_PrintNumber
+    li a0, '/'
+    call TERMINAL_PrintChar
+    lh a0, g_clock_year
+    call TERMINAL_PrintNumber
+
+    # Retore caller-save registers from stack
+    lw ra, 0(sp)            # ra
+    # Restore (callee-save) stack pointer before returning
+    addi sp, sp, 4
+    # Return from function
+    ret
+
+
+# void TERMINAL_DisplayTime(void)
+.globl TERMINAL_DisplayTime
+TERMINAL_DisplayTime:
+    # Reserve 1 words on the stack
+    addi sp, sp, -4
+    # Store caller-save registers on stack
+    sw ra, 0(sp)            # ra
+
+    la a0, STR_TIME
+    call TERMINAL_PrintString
+    
+    call TERMINAL_PrintTime
+
     li a0, '\n'
     call TERMINAL_PrintChar
 
@@ -511,16 +558,9 @@ TERMINAL_DisplayDate:
 
     la a0, STR_DATE
     call TERMINAL_PrintString
-    lb a0, g_clock_day
-    call TERMINAL_PrintNumber
-    li a0, '/'
-    call TERMINAL_PrintChar
-    lb a0, g_clock_month
-    call TERMINAL_PrintNumber
-    li a0, '/'
-    call TERMINAL_PrintChar
-    lh a0, g_clock_year
-    call TERMINAL_PrintNumber
+    
+    call TERMINAL_PrintDate
+
     li a0, '\n'
     call TERMINAL_PrintChar
 

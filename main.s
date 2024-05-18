@@ -15,7 +15,7 @@ infinity_loop:
     # ### example code begin
     lb a0, g_clock_second
     addi a0, a0, 1
-    li a1, 13
+    li a1, 15
     blt a0, a1, 1f
     mv a0, zero
 1:
@@ -25,9 +25,11 @@ infinity_loop:
 
 
     # Display clock to terminal
-    li a0, 35
+    li a0, 38
     call TERMINAL_ClearLine
     call TERMINAL_DisplayDateTime
+    li a0, 6
+    call TERMINAL_FillBlank
     j infinity_loop
 
     # Exit program
@@ -663,6 +665,26 @@ TERMINAL_ClearLine:
 
     mv a1, a0
     li a0, '\b'
+    call TERMINAL_FillChar
+
+    # Retore caller-save registers from stack
+    lw ra, 0(sp)            # ra
+    # Restore (callee-save) stack pointer before returning
+    addi sp, sp, 4
+    # Return from function
+    ret
+
+
+# void TERMINAL_FillBlank(uint32_t max_number_of_character)
+.globl TERMINAL_FillBlank
+TERMINAL_FillBlank:
+    # Reserve 1 words on the stack
+    addi sp, sp, -4
+    # Store caller-save registers on stack
+    sw ra, 0(sp)            # ra
+
+    mv a1, a0
+    li a0, ' '
     call TERMINAL_FillChar
 
     # Retore caller-save registers from stack

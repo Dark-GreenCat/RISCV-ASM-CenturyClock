@@ -12,7 +12,7 @@ _start:
     la a0, STR_DATE
     call TERMINAL_PrintString
 
-    li a0, 1234567
+    li a0, -1234567
     call TERMINAL_PrintNumber
 
     li a0, '\n'
@@ -439,7 +439,7 @@ TERMINAL_PrintString:
     STR_NEWLINE:    .string "\n"
 .text
     mv a1, a0
-    li a0, 4
+    li a0, TERMINAL_PRINT_STRING
     ecall
 
     ret
@@ -450,7 +450,7 @@ TERMINAL_PrintString:
 TERMINAL_PrintNumber:
 .text
     mv a1, a0
-    li a0, 1
+    li a0, TERMINAL_PRINT_INT
     ecall
 
     ret
@@ -461,7 +461,7 @@ TERMINAL_PrintNumber:
 TERMINAL_PrintChar:
 .text
     mv a1, a0
-    li a0, 11
+    li a0, TERMINAL_PRINT_CHAR
     ecall
 
     ret
@@ -474,6 +474,9 @@ TERMINAL_PrintChar:
 
 # Define ecall IDs
 .equ    EXIT, 10
+.equ    TERMINAL_PRINT_CHAR, 11
+.equ    TERMINAL_PRINT_INT, 1
+.equ    TERMINAL_PRINT_STRING, 4
 .equ    LEDMATRIX_SET_PIXEL, 0x100
 .equ    LEDMATRIX_SET_SCREEN, 0x101
 

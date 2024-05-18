@@ -18,6 +18,8 @@ _start:
     li a0, '\n'
     call TERMINAL_PrintChar
 
+    call TERMINAL_DisplayTime
+
     # Exit program
     li a0, EXIT
     ecall
@@ -441,7 +443,7 @@ TERMINAL_PrintString:
     mv a1, a0
     li a0, TERMINAL_PRINT_STRING
     ecall
-
+    # Return from function
     ret
 
 
@@ -452,7 +454,7 @@ TERMINAL_PrintNumber:
     mv a1, a0
     li a0, TERMINAL_PRINT_INT
     ecall
-
+    # Return from function
     ret
 
 
@@ -463,10 +465,27 @@ TERMINAL_PrintChar:
     mv a1, a0
     li a0, TERMINAL_PRINT_CHAR
     ecall
-
+    # Return from function
     ret
 
 
+# void TERMINAL_DisplayTime(void)
+.globl TERMINAL_DisplayTime
+TERMINAL_DisplayTime:
+    la a0, STR_TIME
+    call TERMINAL_PrintString
+    lb a0, g_clock_hour
+    call TERMINAL_PrintNumber
+    li a0, ':'
+    call TERMINAL_PrintChar
+    lb a0, g_clock_minute
+    call TERMINAL_PrintNumber
+    li a0, ':'
+    call TERMINAL_PrintChar
+    lb a0, g_clock_second
+    call TERMINAL_PrintNumber
+    li a0, '\n'
+    call TERMINAL_PrintChar
 
 # #######################################
 # #########      CONSTANT      ##########

@@ -622,6 +622,37 @@ TERMINAL_DisplayDateTime:
     ret
 
 
+# void TERMINAL_FillChar(char c, uint32_t number_of_character)
+.globl TERMINAL_FillChar
+TERMINAL_FillChar:
+    # Reserve 3 words on the stack
+    addi sp, sp, -12
+    # Store caller-save registers on stack
+    sw ra, 0(sp)            # ra
+    sw a0, 4(sp)            
+    sw a1, 8(sp)            
+
+0:
+
+    beqz a1, 1f
+    # Store caller-save registers on stack
+    sw a1, 8(sp)  
+    call TERMINAL_PrintChar
+    # Retore caller-save registers from stack
+    lw a0, 4(sp)            
+    lw a1, 8(sp)
+
+    addi a1, a1, -1
+    j 0b
+1:
+    # Retore caller-save registers from stack
+    lw ra, 0(sp)            # ra
+    # Restore (callee-save) stack pointer before returning
+    addi sp, sp, 12
+    # Return from function
+    ret
+
+
 # void TERMINAL_ClearLine(uint32_t max_number_of_character)
 .globl TERMINAL_ClearLine
 TERMINAL_ClearLine:
@@ -630,14 +661,10 @@ TERMINAL_ClearLine:
     # Store caller-save registers on stack
     sw ra, 0(sp)            # ra
 
-    mv t0, a0
-0:
-    beqz t0, 1f
+    mv a1, a0
     li a0, '\b'
-    call TERMINAL_PrintChar
-    addi t0, t0, -1
-    j 0b
-1:
+    call TERMINAL_FillChar
+
     # Retore caller-save registers from stack
     lw ra, 0(sp)            # ra
     # Restore (callee-save) stack pointer before returning

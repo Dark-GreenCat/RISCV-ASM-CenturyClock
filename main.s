@@ -9,6 +9,18 @@
 
 # Start of code (entry point). Must be put in the beginning
 _start:
+    la a0, STR_DATE
+    call TERMINAL_PrintString
+
+    li a0, 1234567
+    call TERMINAL_PrintNumber
+
+    li a0, '\n'
+    call TERMINAL_PrintChar
+
+    # Exit program
+    li a0, EXIT
+    ecall
 
     # Set pixel at (2, 4) with default color
     li a0, 2
@@ -411,6 +423,48 @@ LEDMATRIX_DisplayDigit_end:
     # Return from function
     ret
 
+
+
+# #######################################
+# ######         TERMINAL          ######
+# #######################################
+.text
+
+# void TERMINAL_PrintString(const char* str)
+.globl TERMINAL_PrintString
+TERMINAL_PrintString:
+.data
+    STR_TIME:       .string "Time: "
+    STR_DATE:       .string "Date: "
+    STR_NEWLINE:    .string "\n"
+.text
+    mv a1, a0
+    li a0, 4
+    ecall
+
+    ret
+
+
+# void TERMINAL_PrintNumber(int32_t number)
+.globl TERMINAL_PrintNumber
+TERMINAL_PrintNumber:
+.text
+    mv a1, a0
+    li a0, 1
+    ecall
+
+    ret
+
+
+# void TERMINAL_PrintChar(char c)
+.globl TERMINAL_PrintChar
+TERMINAL_PrintChar:
+.text
+    mv a1, a0
+    li a0, 11
+    ecall
+
+    ret
 
 
 

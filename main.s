@@ -9,6 +9,20 @@
 
 # Start of code (entry point). Must be put in the beginning
 _start:
+infinity_loop:
+    # Update clock element here
+    # Write your code...
+
+    # Display clock to terminal
+    li a0, 35
+    call TERMINAL_ClearLine
+    call TERMINAL_DisplayDateTime
+    j infinity_loop
+
+    # Exit program
+    li a0, EXIT
+    ecall
+
     la a0, STR_DATE
     call TERMINAL_PrintString
 
@@ -440,7 +454,7 @@ TERMINAL_PrintString:
 .data
     STR_TIME:       .string "Time: "
     STR_DATE:       .string "Date: "
-    STR_DATETIME:   .string "Date and Time:\t"
+    STR_DATETIME:   .string "Date+Time: "
     STR_NEWLINE:    .string "\n"
 .text
     mv a1, a0

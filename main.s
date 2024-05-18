@@ -20,6 +20,7 @@ _start:
 
     call TERMINAL_DisplayTime
     call TERMINAL_DisplayDate
+    call TERMINAL_DisplayDateTime
 
     # Exit program
     li a0, EXIT
@@ -439,6 +440,7 @@ TERMINAL_PrintString:
 .data
     STR_TIME:       .string "Time: "
     STR_DATE:       .string "Date: "
+    STR_DATETIME:   .string "Date and Time:\t"
     STR_NEWLINE:    .string "\n"
 .text
     mv a1, a0
@@ -564,6 +566,53 @@ TERMINAL_DisplayDate:
     li a0, '\n'
     call TERMINAL_PrintChar
 
+    # Retore caller-save registers from stack
+    lw ra, 0(sp)            # ra
+    # Restore (callee-save) stack pointer before returning
+    addi sp, sp, 4
+    # Return from function
+    ret
+
+
+# void TERMINAL_DisplayDateTime(void)
+.globl TERMINAL_DisplayDateTime
+TERMINAL_DisplayDateTime:
+    # Reserve 1 words on the stack
+    addi sp, sp, -4
+    # Store caller-save registers on stack
+    sw ra, 0(sp)            # ra
+
+    la a0, STR_DATETIME
+    call TERMINAL_PrintString
+    call TERMINAL_PrintDate
+    li a0, ' '
+    call TERMINAL_PrintChar
+    call TERMINAL_PrintTime
+
+    # Retore caller-save registers from stack
+    lw ra, 0(sp)            # ra
+    # Restore (callee-save) stack pointer before returning
+    addi sp, sp, 4
+    # Return from function
+    ret
+
+
+# void TERMINAL_ClearLine(uint32_t max_number_of_character)
+.globl TERMINAL_ClearLine
+TERMINAL_ClearLine:
+    # Reserve 1 words on the stack
+    addi sp, sp, -4
+    # Store caller-save registers on stack
+    sw ra, 0(sp)            # ra
+
+    mv t0, a0
+0:
+    beqz t0, 1f
+    li a0, '\b'
+    call TERMINAL_PrintChar
+    addi t0, t0, -1
+    j 0b
+1:
     # Retore caller-save registers from stack
     lw ra, 0(sp)            # ra
     # Restore (callee-save) stack pointer before returning

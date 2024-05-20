@@ -13,14 +13,12 @@ infinity_loop:
     # Update clock element here
     # Remove the example code and write your code... 
     # ### example code begin
-    lb a0, g_clock_second
-    addi a0, a0, 1
-    li a1, 15
-    blt a0, a1, 1f
-    mv a0, zero
-1:
-    la a1, g_clock_second
-    sb a0, 0(a1)
+    call CLOCK_IncreaseOneHour
+    call CLOCK_IncreaseOneMinute
+    call CLOCK_IncreaseOneSecond
+    call CLOCK_IncreaseOneDay
+    call CLOCK_IncreaseOneMonth
+    call CLOCK_IncreaseOneYear
     # ### example code end
 
 
@@ -1085,6 +1083,10 @@ TERMINAL_FillBlank:
 .equ    TERMINAL_PRINT_STRING, 4
 .equ    LEDMATRIX_SET_PIXEL, 0x100
 .equ    LEDMATRIX_SET_SCREEN, 0x101
+.equ    MAX_VALUE_DAY_28, 28
+.equ    MAX_VALUE_DAY_29, 29
+.equ    MAX_VALUE_DAY_30, 30
+.equ    MAX_VALUE_DAY_31, 31
 
 # #######################################
 # #####      CONSTANT VARIABLE     ######
@@ -1229,11 +1231,27 @@ g_p_font_digit:
     .word FONT_DIGIT_9
 
 # Define clock element
-g_clock_second: .byte 0
-g_clock_minute: .byte 30
-g_clock_hour:   .byte 7
-g_clock_day:    .byte 11
-g_clock_month:  .byte 5
-g_clock_year:   .half 2024
+g_clock_second: .word 0          # Biến toàn cục đại diện cho số giây
+g_clock_minute: .word 0          # Biến toàn cục đại diện cho số phút
+g_clock_hour: .word 0 
+g_clock_day: .word 1          # Biến toàn cục đại diện cho số giờ
+g_clock_month: .word 1           # Biến toàn cục đại diện cho số tháng
+g_clock_year: .word 2000            # Biến toàn cục đại diện cho số năm
+
+MAX_VALUE_SECOND: .word 59       # Giá trị tối đa cho số giây
+MAX_VALUE_MINUTE: .word 59       # Giá trị tối đa cho số phút
+MAX_VALUE_HOUR: .word 23         # Giá trị tối đa cho số giờ
+MAX_VALUE_MONTH: .word 12        # Giá trị tối đa cho số tháng (0-11)
+MAX_VALUE_YEAR: .word 9999       # Giá trị tối đa cho số năm (ví dụ)
+
+INITIAL_YEAR: .word 1
+INITIAL_MONTH: .word 1
+INITIAL_DAY: .word 1
+INITIAL_HOUR: .word 0
+INITIAL_MINUTE: .word 0
+INITIAL_SECOND: .word 0
+
+DIRECTION_INCREASE: .word 1      # Hướng tăng (1)
+b_clock_overflow: .word 0        # Biến để lưu kết quả tràn
 
 # End of program, leave a blank line afterwards is preferred

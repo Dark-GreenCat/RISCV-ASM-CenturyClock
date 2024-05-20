@@ -13,7 +13,9 @@ infinity_loop:
     # Update clock element here
     # Remove the example code and write your code... 
     # ### example code begin
+    call CCLOCK_Wait1sSignal
     call CCLOCK_UpdateTime
+    call CCLOCK_DisplayClock
     # ### example code end
 
 
@@ -88,12 +90,12 @@ CCLOCK_UpdateTime:
     sw ra, 0(sp)
     # Check g_1s_signal
     la t0, g_1s_signal
-    lw t1, 0(t0)
+    lb t1, 0(t0)
     beqz t1, end_CCLOCK_UpdateTime # if(g_1s_signal == 0) {end}
 
     # Set g_1s_signal = false
     li t1, 0
-    sw t1, 0(t0)    # g_1s_signal = false
+    sb t1, 0(t0)    # g_1s_signal = false
 
     # Call CLOCK_IncreaseOneSecond
     call CLOCK_IncreaseOneSecond

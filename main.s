@@ -9,11 +9,14 @@
 
 # Start of code (entry point). Must be put in the beginning
 _start:
+    la a0, g_clock_second
+    la a0, g_clock_minute
 infinity_loop:
     # Update clock element here
     # Remove the example code and write your code... 
     # ### example code begin
     call MAIN_Init
+    call MAIN_Loop
     # ### example code end
 
 
@@ -77,7 +80,7 @@ MAIN_Init:    # Reserve 1 words on the stack
     la t2, g_1s_signal
     sw t1, 0(t2)
 
-    call CCLOCK_DisplayClock
+    # call CCLOCK_DisplayClock
 
     # Retore callee-save registers from stack
     lw ra, 0(sp)
@@ -94,7 +97,13 @@ loop:
     beqz a0, loop
 
     call CCLOCK_UpdateTime
-    call CCLOCK_DisplayClock
+    # call CCLOCK_DisplayClock
+    # Display clock to terminal
+    li a0, 38
+    call TERMINAL_ClearLine
+    call TERMINAL_DisplayDateTime
+    li a0, 6
+    call TERMINAL_FillBlank
     j loop
 
 # #######################################
@@ -156,25 +165,25 @@ CCLOCK_UpdateTime:
 
     # Call CLOCK_IncreaseOneSecond
     call CLOCK_IncreaseOneSecond
-    bnez a0, end_CCLOCK_UpdateTime
+    beqz a0, end_CCLOCK_UpdateTime
 
     # Call CLOCK_IncreaseOneMinute
     call CLOCK_IncreaseOneMinute
-    bnez a0, end_CCLOCK_UpdateTime
+    beqz a0, end_CCLOCK_UpdateTime
 
     # Call CLOCK_IncreaseOneHour
     call CLOCK_IncreaseOneHour
-    bnez a0, end_CCLOCK_UpdateTime
+    beqz a0, end_CCLOCK_UpdateTime
 
     # Call CLOCK_IncreaseOneDay
     lw a0, g_clock_month
     lw a1, g_clock_year
     call CLOCK_IncreaseOneDay
-    bnez a0, end_CCLOCK_UpdateTime
+    beqz a0, end_CCLOCK_UpdateTime
 
     # Call CLOCK_IncreaseOneMonth
     call CLOCK_IncreaseOneMonth
-    bnez a0, end_CCLOCK_UpdateTime
+    beqz a0, end_CCLOCK_UpdateTime
 
     # Call CLOCK_IncreaseOneMonth
     call CLOCK_IncreaseOneYear
@@ -1288,12 +1297,12 @@ FONT_DIGIT_9:
     .byte 0b01110
 
 # Define position for clock element
-POS_SS_X:   .half 1
-POS_SS_Y:   .half 1
+POS_HH_X:   .half 1
+POS_HH_Y:   .half 1
 POS_MI_X:   .half 16
 POS_MI_Y:   .half 1
-POS_HH_X:   .half 31
-POS_HH_Y:   .half 1
+POS_SS_X:   .half 31
+POS_SS_Y:   .half 1
 POS_DD_X:   .half 1
 POS_DD_Y:   .half 13
 POS_MO_X:   .half 16

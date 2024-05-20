@@ -37,7 +37,11 @@ infinity_loop:
 .text
 
 # void MAIN_Init(void)
-MAIN_Init:
+MAIN_Init:    # Reserve 1 words on the stack
+    addi sp, sp, -4
+    # Store callee-save registers on stack
+    sw ra, 0(sp)
+
     # Initial global variables 
     lw t0, DEFAULT_SECOND      # load value into t0
     la t1, g_clock_second      # load address into t1
@@ -74,6 +78,13 @@ MAIN_Init:
     sw t1, 0(t2)
 
     call CCLOCK_DisplayClock
+
+    # Retore callee-save registers from stack
+    lw ra, 0(sp)
+    # Restore (callee-save) stack pointer before returning 
+    addi sp, sp, 4
+    ret
+
 
 # void MAIN_Loop(void)
 .globl MAIN_Loop

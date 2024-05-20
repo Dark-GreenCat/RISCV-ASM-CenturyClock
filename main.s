@@ -48,6 +48,108 @@ infinity_loop:
 # #######################################
 .text
 
+# bool CCLOCK_Wait1sSignal(void)
+.globl CCLOCK_Wait1sSignal
+CCLOCK_Wait1sSignal:
+    # Reserve 2 words on the stack
+    addi sp, sp, -8
+    # Store callee-save registers on stack
+    sw s0, 0(sp)            # ra
+    sw s1, 4(sp)            # ra
+
+    # Check g_cycle_1s_count true/false ?
+    lb s0, g_cycle_1s_count
+    lb s1, CYCLE_1S_WAIT
+    beq s0, s1, 1f          # if (g_cycle_1s_count == CYCLE_1S_WAIT) 
+    lb s0, g_cycle_1s_count 
+    addi s0, s0, 1          # g_cycle_1s_count + 1
+    la s1, g_cycle_1s_count
+    sb s0, 0(s1)            # g_cycle_1s_count = g_cycle_1s_count + 1    
+    li a0, 0                # return funcitons is false 
+    j 2f
+
+1:
+    la s0, g_cycle_1s_count
+    sb zero, 0(s0)              # g_cycle_1s_count = 0
+    la s0, g_1s_signal
+    li s1, 1
+    sb s1, 0(s0)                # g_1s_signal = 0
+    li a0, 1                    # return 1 (true) have signal 1s
+2:
+    # Retore callee-save registers from stack
+    lw s0, 0(sp)            # ra
+    lw s1, 4(sp)            # ra
+    # Restore (callee-save) stack pointer before returning
+    addi sp, sp, 8
+    # Return from function
+    ret
+
+# void CCLOCK_UpdateTime(void)
+.globl CCLOCK_UpdateTime
+CCLOCK_UpdateTime:
+    # Reserve 1 words on the stack
+    addi sp, sp, -4
+    # Store callee-save registers on stack
+    sw ra, 0(sp)
+    # Check g_1s_signal
+    la t0, g_1s_signal
+    lw t1, 0(t0)
+    beqz t1, end_CCLOCK_UpdateTime # if(g_1s_signal == 0) {end}
+
+    # Set g_1s_signal = false
+    li t1, 0
+    sw t1, 0(t0)    # g_1s_signal = false
+
+    # Call CLOCK_IncreaseOneSecond
+    call CLOCK_IncreaseOneSecond
+    bnez a0, end_CCLOCK_UpdateTime
+
+    # Call CLOCK_IncreaseOneMinute
+    call CLOCK_IncreaseOneMinute
+    bnez a0, end_CCLOCK_UpdateTime
+
+    # Call CLOCK_IncreaseOneHour
+    call CLOCK_IncreaseOneHour
+    bnez a0, end_CCLOCK_UpdateTime
+
+    # Call CLOCK_IncreaseOneDay
+    lw a0, g_clock_month
+    lw a1, g_clock_year
+    call CLOCK_IncreaseOneDay
+    bnez a0, end_CCLOCK_UpdateTime
+
+    # Call CLOCK_IncreaseOneMonth
+    call CLOCK_IncreaseOneMonth
+    bnez a0, end_CCLOCK_UpdateTime
+
+    # Call CLOCK_IncreaseOneMonth
+    call CLOCK_IncreaseOneYear
+
+end_CCLOCK_UpdateTime:
+    # Retore callee-save registers from stack
+    lw ra, 0(sp)
+    # Restore (callee-save) stack pointer before returning 
+    addi sp, sp, 4
+    ret
+
+# void CCLOCK_DisplayClock(void)
+.globl CCLOCK_DisplayClock
+CCLOCK_DisplayClock: 
+    # Reserve 1 words on the stack
+    addi sp, sp, -4
+    # Store callee-save registers on stack
+    sw ra, 0(sp)
+    call DISPLAY_DisplayHour
+    call DISPLAY_DisplayMinute
+    call DISPLAY_DisplaySecond
+    call DISPLAY_DisplayDay
+    call DISPLAY_DisplayMonth
+    call DISPLAY_DisplayYear
+    # Retore callee-save registers from stack
+    lw ra, 0(sp)
+    # Restore (callee-save) stack pointer before returning 
+    addi sp, sp, 4
+    ret
 
 
 # #######################################

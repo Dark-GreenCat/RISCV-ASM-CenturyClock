@@ -13,9 +13,7 @@ infinity_loop:
     # Update clock element here
     # Remove the example code and write your code... 
     # ### example code begin
-    call CCLOCK_Wait1sSignal
-    call CCLOCK_UpdateTime
-    call CCLOCK_DisplayClock
+    call MAIN_Init
     # ### example code end
 
 
@@ -38,7 +36,55 @@ infinity_loop:
 # #######################################
 .text
 
+# void MAIN_Init(void)
+MAIN_Init:
+    # Initial global variables 
+    lw t0, DEFAULT_SECOND      # load value into t0
+    la t1, g_clock_second      # load address into t1
+    sw t0, 0(t1)               # store t0 into t1
 
+    lw t0, DEFAULT_MINUTE
+    la t1, g_clock_minute
+    sw t0, 0(t1)
+
+    lw t0, DEFAULT_HOUR
+    la t1, g_clock_hour
+    sw t0, 0(t1)
+
+    lw t0, DEFAULT_DAY
+    la t1, g_clock_day
+    sw t0, 0(t1)
+
+    lw t0, DEFAULT_MONTH
+    la t1, g_clock_month
+    sw t0, 0(t1)
+
+    lw t0, DEFAULT_YEAR
+    la t1, g_clock_year
+    sw t0, 0(t1)
+
+    # Khởi tạo g_cycle_1s_count thành 0
+    li t1, 0
+    la t2, g_cycle_1s_count
+    sw t1, 0(t2)
+
+    # Khởi tạo g_1s_signal thành false (0)
+    li t1, 0
+    la t2, g_1s_signal
+    sw t1, 0(t2)
+
+    call CCLOCK_DisplayClock
+
+# void MAIN_Loop(void)
+.globl MAIN_Loop
+MAIN_Loop:
+loop:
+    call CCLOCK_Wait1sSignal
+    beqz a0, loop
+
+    call CCLOCK_UpdateTime
+    call CCLOCK_DisplayClock
+    j loop
 
 # #######################################
 # ######       CCLOCK MODULE       ######
@@ -1286,6 +1332,14 @@ MAX_VALUE_MINUTE: .word 59       # Giá trị tối đa cho số phút
 MAX_VALUE_HOUR: .word 23         # Giá trị tối đa cho số giờ
 MAX_VALUE_MONTH: .word 12        # Giá trị tối đa cho số tháng (0-11)
 MAX_VALUE_YEAR: .word 9999       # Giá trị tối đa cho số năm (ví dụ)
+
+# Define clock default 
+DEFAULT_SECOND: .word 0
+DEFAULT_MINUTE: .word 30
+DEFAULT_HOUR:   .word 7
+DEFAULT_DAY:    .word 11
+DEFAULT_MONTH:  .word 5
+DEFAULT_YEAR:   .word 2024
 
 INITIAL_YEAR: .word 1
 INITIAL_MONTH: .word 1

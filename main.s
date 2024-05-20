@@ -13,12 +13,7 @@ infinity_loop:
     # Update clock element here
     # Remove the example code and write your code... 
     # ### example code begin
-    call CLOCK_IncreaseOneHour
-    call CLOCK_IncreaseOneMinute
-    call CLOCK_IncreaseOneSecond
-    call CLOCK_IncreaseOneDay
-    call CLOCK_IncreaseOneMonth
-    call CLOCK_IncreaseOneYear
+    call CCLOCK_UpdateTime
     # ### example code end
 
 
@@ -1251,6 +1246,9 @@ POS_YY_Y:   .half 13
 NUMBER_WIDTH_2: .byte 2
 NUMBER_WIDTH_4: .byte 4
 
+# Define 1s cycle
+CYCLE_1S_WAIT:  .byte 3
+
 # #######################################
 # ######      GLOBAL VARIABLE     #######
 # #######################################
@@ -1276,6 +1274,10 @@ g_clock_hour: .word 0
 g_clock_day: .word 1          # Biến toàn cục đại diện cho số giờ
 g_clock_month: .word 1           # Biến toàn cục đại diện cho số tháng
 g_clock_year: .word 2000            # Biến toàn cục đại diện cho số năm
+
+# Define signal
+g_cycle_1s_count: .byte 0
+g_1s_signal:    .byte 0
 
 MAX_VALUE_SECOND: .word 59       # Giá trị tối đa cho số giây
 MAX_VALUE_MINUTE: .word 59       # Giá trị tối đa cho số phút

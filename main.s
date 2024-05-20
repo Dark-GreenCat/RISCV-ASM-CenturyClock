@@ -120,6 +120,384 @@ infinity_loop:
 # #######################################
 .text
 
+# Định nghĩa hàm CLOCK_IncreaseOneSecond
+.globl CLOCK_IncreaseOneSecond
+CLOCK_IncreaseOneSecond:
+    # Lưu giá trị của các thanh ghi cần dùng vào stack
+    addi sp, sp, -20
+    sw ra, 16(sp)
+    sw t0, 12(sp)
+    sw t1, 8(sp)
+    sw t2, 4(sp)
+    sw t3, 0(sp)             # Lưu giá trị thanh ghi t3
+
+    # Load các tham số vào thanh ghi
+    la t0, g_clock_second      # t0 = &g_clock_second
+    la t1, MAX_VALUE_SECOND    # t1 = MAX_VALUE_SECOND
+    lw t1, 0(t1)               # Đọc giá trị của MAX_VALUE_SECOND
+    la t2, DIRECTION_INCREASE  # t2 = DIRECTION_INCREASE
+    lw t2, 0(t2)               # Đọc giá trị của DIRECTION_INCREASE
+    la t3, INITIAL_SECOND
+    lw t3, 0(t3)
+
+    # Gọi hàm CLOCK_IncreaseByOne với các tham số
+    mv a0, t0                  # Tham số 1: &g_clock_second
+    mv a1, t1                  # Tham số 2: MAX_VALUE_SECOND
+    mv a2, t2                  # Tham số 3: DIRECTION_INCREASE
+    mv a3, t3
+    jal ra, CLOCK_IncreaseByOne
+
+    # Lưu kết quả b_clock_overflow vào bộ nhớ
+    la t0, b_clock_overflow
+    sw a0, 0(t0)
+
+    # Khôi phục giá trị của các thanh ghi từ stack
+    lw t3, 0(sp)
+    lw t2, 4(sp)
+    lw t1, 8(sp)
+    lw t0, 12(sp)
+    lw ra, 16(sp)
+    addi sp, sp, 20
+
+    # Trả về kết quả
+    jr ra                      # Quay lại điểm gọi
+
+# Định nghĩa các hàm khác tương tự
+.globl CLOCK_IncreaseOneMinute
+CLOCK_IncreaseOneMinute:
+    addi sp, sp, -20
+    sw ra, 16(sp)
+    sw t0, 12(sp)
+    sw t1, 8(sp)
+    sw t2, 4(sp)
+    sw t3, 0(sp)
+
+    la t0, g_clock_minute
+    la t1, MAX_VALUE_MINUTE
+    lw t1, 0(t1)
+    la t2, DIRECTION_INCREASE
+    lw t2, 0(t2)
+    la t3, INITIAL_MINUTE
+    lw t3, 0(t3)
+
+    mv a0, t0
+    mv a1, t1
+    mv a2, t2
+    mv a3, t3
+    jal ra, CLOCK_IncreaseByOne
+
+    la t0, b_clock_overflow
+    sw a0, 0(t0)
+
+    lw t3, 0(sp)
+    lw t2, 4(sp)
+    lw t1, 8(sp)
+    lw t0, 12(sp)
+    lw ra, 16(sp)
+    addi sp, sp, 20
+
+    jr ra
+
+CLOCK_IncreaseOneHour:
+    addi sp, sp, -20
+    sw ra, 16(sp)
+    sw t0, 12(sp)
+    sw t1, 8(sp)
+    sw t2, 4(sp)
+    sw t3, 0(sp)
+
+    la t0, g_clock_hour
+    la t1, MAX_VALUE_HOUR
+    lw t1, 0(t1)
+    la t2, DIRECTION_INCREASE
+    lw t2, 0(t2)
+    la t3, INITIAL_HOUR
+    lw t3, 0(t3)
+
+    mv a0, t0
+    mv a1, t1
+    mv a2, t2
+    mv a3, t3
+    jal ra, CLOCK_IncreaseByOne
+
+    la t0, b_clock_overflow
+    sw a0, 0(t0)
+
+    lw t3, 0(sp)
+    lw t2, 4(sp)
+    lw t1, 8(sp)
+    lw t0, 12(sp)
+    lw ra, 16(sp)
+    addi sp, sp, 20
+
+    jr ra
+
+CLOCK_IncreaseOneMonth:
+    addi sp, sp, -20
+    sw ra, 16(sp)
+    sw t0, 12(sp)
+    sw t1, 8(sp)
+    sw t2, 4(sp)
+    sw t3, 0(sp)
+
+    la t0, g_clock_month
+    la t1, MAX_VALUE_MONTH
+    lw t1, 0(t1)
+    la t2, DIRECTION_INCREASE
+    lw t2, 0(t2)
+    la t3, INITIAL_MONTH
+    lw t3, 0(t3)
+
+    mv a0, t0
+    mv a1, t1
+    mv a2, t2
+    mv a3, t3
+    jal ra, CLOCK_IncreaseByOne
+
+    la t0, b_clock_overflow
+    sw a0, 0(t0)
+
+    lw t3, 0(sp)
+    lw t2, 4(sp)
+    lw t1, 8(sp)
+    lw t0, 12(sp)
+    lw ra, 16(sp)
+    addi sp, sp, 20
+
+    jr ra
+
+CLOCK_IncreaseOneYear:
+    addi sp, sp, -20
+    sw ra, 16(sp)
+    sw t0, 12(sp)
+    sw t1, 8(sp)
+    sw t2, 4(sp)
+    sw t3, 0(sp)
+
+    la t0, g_clock_year
+    la t1, MAX_VALUE_YEAR
+    lw t1, 0(t1)
+    la t2, DIRECTION_INCREASE
+    lw t2, 0(t2)
+    la t3, INITIAL_YEAR
+    lw t3, 0(t3)
+
+    mv a0, t0
+    mv a1, t1
+    mv a2, t2
+    mv a3, t3
+    jal ra, CLOCK_IncreaseByOne
+
+    la t0, b_clock_overflow
+    sw a0, 0(t0)
+
+    lw t3, 0(sp)
+    lw t2, 4(sp)
+    lw t1, 8(sp)
+    lw t0, 12(sp)
+    lw ra, 16(sp)
+    addi sp, sp, 20
+
+    jr ra
+
+.globl CLOCK_IncreaseOneDay
+CLOCK_IncreaseOneDay:
+    # Save registers
+    addi sp, sp, -24
+    sw ra, 20(sp)
+    sw t0, 16(sp)
+    sw t1, 12(sp)
+    sw t2, 8(sp)
+    sw t3, 4(sp)
+    sw t4, 0(sp)
+
+    # Load arguments
+    lw t0, 0(a0)    # t0 = current_month
+    lw t1, 4(a0)    # t1 = current_year
+    la t4, INITIAL_DAY
+    lw t4, 0(t4)
+
+    mv a3, t4
+
+    # Initialize max_value_day
+    li t2, MAX_VALUE_DAY_28
+
+    # Check if the current month is February
+    li t3, 2
+    beq t0, t3, check_leap_year
+
+    # Check if the current month is in the list {1, 3, 5, 7, 8, 10, 12}
+    li t3, 1
+    beq t0, t3, set_max_31
+    li t3, 3
+    beq t0, t3, set_max_31
+    li t3, 5
+    beq t0, t3, set_max_31
+    li t3, 7
+    beq t0, t3, set_max_31
+    li t3, 8
+    beq t0, t3, set_max_31
+    li t3, 10
+    beq t0, t3, set_max_31
+    li t3, 12
+    beq t0, t3, set_max_31
+
+    # Set max_value_day to 30 for other months
+    li t2, MAX_VALUE_DAY_30
+    j increase_day
+
+set_max_31:
+    li t2, MAX_VALUE_DAY_31
+    j increase_day
+
+check_leap_year:
+    # Call CLOCK_IsLeapYear
+    mv a0, t1
+    jal ra, CLOCK_IsLeapYear
+
+    # Check if it's a leap year
+    beq a0, x0, feb_not_leap
+
+    # Set max_value_day to 29 for leap year
+    li t2, MAX_VALUE_DAY_29
+    j increase_day
+
+feb_not_leap:
+    li t2, MAX_VALUE_DAY_28
+
+increase_day:
+    # Call CLOCK_IncreaseByOne
+    la a0, g_clock_day
+    mv a1, t2
+    li a2, 1       # DIRECTION_INCREASE
+    jal ra, CLOCK_IncreaseByOne
+
+    # Store result in b_clock_overflow
+    mv a0, a0
+
+    # Restore registers
+    lw t4, 0(sp)
+    lw t3, 4(sp)
+    lw t2, 8(sp)
+    lw t1, 12(sp)
+    lw t0, 16(sp)
+    lw ra, 20(sp)
+    addi sp, sp, 24
+
+    # Return
+    jr ra
+
+#Hàm check năm nhuận
+.globl CLOCK_IsLeapYear
+CLOCK_IsLeapYear:
+    # Save registers
+    addi sp, sp, -12
+    sw ra, 8(sp)
+    sw t0, 4(sp)
+    sw t1, 0(sp)
+
+    # Load argument
+    mv t0, a0    # t0 = year
+
+    # Check if year % 100 == 0
+    li t1, 100
+    rem t1, t0, t1
+    bnez t1, not_century
+    j not_leap
+
+not_century:
+    # Check if year % 4 == 0
+    li t1, 4
+    rem t1, t0, t1
+    bnez t1, not_leap
+    j is_leap
+
+is_leap:
+    li a0, 1    # Return true
+    j leap_done
+
+not_leap:
+    li a0, 0    # Return false
+    j leap_done
+leap_done:
+    # Restore registers
+    lw t1, 0(sp)
+    lw t0, 4(sp)
+    lw ra, 8(sp)
+    addi sp, sp, 12
+
+    # Return
+    jr ra
+
+
+# Định nghĩa hàm CLOCK_IncreaseByOne
+.globl CLOCK_IncreaseByOne
+CLOCK_IncreaseByOne:
+    # Lưu giá trị của các thanh ghi cần dùng vào stack
+    addi sp, sp, -12           # Tạo không gian trên stack
+    sw ra, 8(sp)               # Lưu giá trị thanh ghi return address
+    sw t6, 4(sp)
+    sw t1, 0(sp)               # Lưu giá trị thanh ghi t1
+
+    # Load the values from memory
+    lw t1, 0(a0)               # t1 = *p_clock_counter
+    mv t3, a1                  # t3 = max_value
+    mv t4, a2                  # t4 = b_direction
+    mv t2, a3                  # t2 = initial_value
+
+    # Initialize b_clock_overflow to false
+    li t5, 0                   # t5 = 0
+
+    # Check the direction and perform the appropriate operation
+    li t6, 1                   # t6 = DIRECTION_INCREASE
+    beq t4, t6, increase       # Nếu b_direction == DIRECTION_INCREASE, nhảy tới increase
+
+    # Direction is decrease
+    li t6, 0                   # t6 = 0
+    beq t1, t6, underflow      # nếu clock_counter == 0, nhảy tới underflow
+
+    # Decrement the clock_counter
+    addi t1, t1, -1            # clock_counter -= 1
+    j store_and_exit           # Nhảy tới store_and_exit
+
+underflow:
+    li t5, 1                   # b_clock_overflow = true
+    mv t1, t3                  # clock_counter = max_value
+    j store_and_exit           # Nhảy tới store_and_exit
+
+increase:
+    beq t1, t3, overflow       # nếu clock_counter == max_value, nhảy tới overflow
+
+    # Increment the clock_counter
+    addi t1, t1, 1             # clock_counter += 1
+    j store_and_exit           # Nhảy tới store_and_exit
+
+overflow:
+    li t5, 1                   # b_clock_overflow = true
+    beqz t2, overflow_0
+    j overflow_1                   # clock_counter = 0
+
+overflow_0:
+    li t1, 0
+    j store_and_exit 
+
+overflow_1:
+    li t1, 1
+
+store_and_exit:
+    # Store the clock_counter back to memory
+    sw t1, 0(a0)
+
+    # Trả về b_clock_overflow qua a0
+    mv a0, t5
+
+    # Khôi phục giá trị của các thanh ghi từ stack
+    lw t1, 0(sp)               # Phục hồi giá trị thanh ghi t1
+    lw ra, 8(sp)               # Phục hồi giá trị thanh ghi ra
+    addi sp, sp, 12            # Giải phóng stack
+
+    # Quay lại điểm gọi
+    jr ra
 
 
 # #######################################

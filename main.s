@@ -34,69 +34,6 @@ infinity_loop:
     li a0, EXIT
     ecall
 
-    la a0, STR_DATE
-    call TERMINAL_PrintString
-
-    li a0, -1234567
-    call TERMINAL_PrintNumber
-
-    li a0, '\n'
-    call TERMINAL_PrintChar
-
-    call TERMINAL_DisplayTime
-    call TERMINAL_DisplayDate
-    call TERMINAL_DisplayDateTime
-
-    # Exit program
-    li a0, EXIT
-    ecall
-
-    # Set pixel at (2, 4) with default color
-    li a0, 2
-    li a1, 4
-    lw a2, COLOR_DEFAULT
-    call LEDMATRIX_DisplayPixel
-
-    li a0, 0b11101011
-    li a1, 8
-    li a2, 1
-    li a3, 9
-    lw a4, COLOR_DEFAULT
-    call LEDMATRIX_DisplayRow
-
-    li a0, 5
-    li a1, 13
-    li a2, 1
-    lw a3, COLOR_DEFAULT
-    call LEDMATRIX_DisplayDigit
-
-    li a0, 7
-    li a1, 13
-    li a2, 12
-    lw a3, COLOR_DEFAULT
-    call LEDMATRIX_DisplayDigit
-
-    li a0, 123456789
-    li a1, 1
-    li a2, 1
-    li a3, 1
-    lw a4, COLOR_DEFAULT
-    call DISPLAY_DisplayNumber
-
-    lw a0, COLOR_SCREEN
-    call LEDMATRIX_SetScreen
-
-    call DISPLAY_DisplaySecond
-    call DISPLAY_DisplayMinute
-    call DISPLAY_DisplayHour
-    call DISPLAY_DisplayDay
-    call DISPLAY_DisplayMonth
-    call DISPLAY_DisplayYear
-
-    # Exit program
-    li a0, EXIT
-    ecall
-
 
 
 # #######################################
